@@ -1,7 +1,7 @@
 const { SerialPort } = require('serialport');
 
-const productId = '0043';
-const baudRate = 9600;
+const productId = '7523';
+const baudRate = 115200;
 
 const _debug_ = true;
 
@@ -23,8 +23,7 @@ class LedController {
 
     this.port = new SerialPort({
       baudRate,
-      path: port.path,
-      rtscts: true
+      path: port.path
     });
 
     if(_debug_) {
@@ -45,11 +44,11 @@ class LedController {
     if(!this.isConnected) return;
     if(this.isSending) return;
 
+    console.log('Sending message');
     this.isSending = true;
 
     const byteArray = message.toByteArray();
     this.port.write(Buffer.from(byteArray));
-    this.port.drain();
     
     this.isSending = false;
   }
