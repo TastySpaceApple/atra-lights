@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set LEDs Number</title>
+  <script>
+    function setLedNumber(stripIndex) {
+      const ledNumber = document.getElementById(`ledsNumber${stripIndex}`).value;
+      fetch('/setLedNumber', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ stripIndex, ledNumber })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    div {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .app {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Set LEDs Number</h1>
+    <div>
+      <label for="ledsNumber1">Strip Z:</label>
+      <input type="number" id="ledsNumber1" name="ledsNumber1">
+      <button onclick="setLedNumber(1)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber2">Strip Y:</label>
+      <input type="number" id="ledsNumber2" name="ledsNumber2">
+      <button onclick="setLedNumber(2)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber3">Strip X:</label>
+      <input type="number" id="ledsNumber3" name="ledsNumber3">
+      <button onclick="setLedNumber(3)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber4">Strip W:</label>
+      <input type="number" id="ledsNumber4" name="ledsNumber4">
+      <button onclick="setLedNumber(4)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber5">Strip V:</label>
+      <input type="number" id="ledsNumber5" name="ledsNumber5">
+      <button onclick="setLedNumber(5)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber6">Strip U:</label>
+      <input type="number" id="ledsNumber6" name="ledsNumber6">
+      <button onclick="setLedNumber(6)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber7">Strip T:</label>
+      <input type="number" id="ledsNumber7" name="ledsNumber7">
+      <button onclick="setLedNumber(7)">Set</button>
+    </div>
+    <div>
+      <label for="ledsNumber8">Strip S:</label>
+      <input type="number" id="ledsNumber8" name="ledsNumber8">
+      <button onclick="setLedNumber(8)">Set</button>
+    </div>
+  </div>
+</body>
+
+</html>
