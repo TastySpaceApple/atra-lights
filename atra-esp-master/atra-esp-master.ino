@@ -92,10 +92,6 @@ void setup()
 
 void sendData(uint8_t stripIndex, uint8_t messageType, uint8_t brightness, uint8_t position, uint8_t width)
 {
-  if(stripIndex != 0) {
-    stripIndex = stripIndex - 1; // Strip 1 is actually index 0
-  }
-
   if(stripIndex >= NUM_STRIPS) {
     Serial.println("Invalid strip index");
     return;
@@ -108,10 +104,13 @@ void sendData(uint8_t stripIndex, uint8_t messageType, uint8_t brightness, uint8
   myData.position = position;
   myData.width = width;
 
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(broadcastAddresses[stripIndex], (uint8_t *)&myData, sizeof(myData));
-  if(result != ESP_OK) {
-    Serial.println("Error sending data to strip " + stripIndex);
+
+  if(stripIndex == 0) {
+    Serial.println("Sending data to all strips");
+    esp_now_send(NULL, (uint8_t *)&myData, sizeof(myData));
+  } else {
+    Serial.println("Sending data to strip " + stripIndex);
+    esp_now_send(broadcastAddresses[stripIndex - 1], (uint8_t *)&myData, sizeof(myData));
   }
 }
 

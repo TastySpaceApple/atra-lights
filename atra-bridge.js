@@ -43,9 +43,9 @@ osc.on('/send', (msg) => {
 osc.on('/rgb', (msg) => {
   const [r, g, b] = msg.args;
   clearTimeout(sendStateUpdate);
-  const atraColorMessage = new AtraColorMessage(1, r, g, b);
+  const atraColorMessage = new AtraColorMessage(0, r, g, b);
   ledController.send(atraColorMessage);
-  setTimeout(sendStateUpdate, 18);
+  setTimeout(sendStateUpdate, 20);
 })
 
 const ledController = new LedController();
@@ -96,4 +96,15 @@ configServer.on('/setLedNumber', (data) => {
   const { stripIndex, ledNumber } = data;
   const msg = new AtraSetLedNumberMessage(stripIndex, ledNumber);
   ledController.send(msg);
+})
+
+configServer.on('/setBrightnessPositionWidth', (data) => {
+  const { stripIndex, brightness, position, width } = data;
+  updateState(stripIndex, position, brightness, width);
+})
+
+configServer.on('/setColor', (data) => {
+  const { r, g, b } = data;
+  const atraColorMessage = new AtraColorMessage(0, r, g, b);
+  ledController.send(atraColorMessage);
 })

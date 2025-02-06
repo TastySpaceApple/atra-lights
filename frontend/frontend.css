@@ -1,0 +1,85 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  height: 100vh;
+}
+
+.devices {
+  overflow: hidden scroll;
+  background-color: purple
+}
+
+.device {
+  display: flex;
+  align-items: center;
+
+  input {
+    display: none;
+  }
+}
+
+.device-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  padding-inline-end: 3em;
+}
+
+.device-name {
+  border: 1px solid;
+  padding: 10px;
+  width: 2.5em;
+  text-align: center;
+  background-color: #444;
+  color: gold;
+}
+
+.mac {
+  opacity: .8;
+  font-family: monospace;
+}
+.device-id {
+  width: 2em;
+  text-align: center;
+  font-weight: bold;
+  font-size: larger;
+}
+
+input:checked + .device-info {
+  background-color: lightblue;
+}
+
+.input-and-action {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+button {
+  padding: 10px;
+  background-color: purple;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+h2 {
+  font-size: .8em;
+  margin-top: 3em;
+}
+
+input {
+  width: 100%;
+  max-width: 20em;
+}
