@@ -36,9 +36,8 @@ const updateState = (chunk, position, brightness, width) => {
 }
 
 osc.on('/send', (msg) => {
-  const [position, brightness, width] = msg.args;
-  console.log('Received message', msg.args);
-  updateState(1, position, brightness, width);
+  const [chunk, position, brightness, width] = msg.args;
+  updateState(chunk, position, brightness, width);
 })
 
 osc.on('/rgb', (msg) => {

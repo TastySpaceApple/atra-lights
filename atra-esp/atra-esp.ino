@@ -1,9 +1,19 @@
 #include <FastLED.h>
-#include <espnow.h>
-#include <ESP8266WiFi.h>
+#if defined(ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <espnow.h>
+#elif defined(ESP32)
+  #include <esp_now.h>
+  #include <WiFi.h>
+#endif
+// #include <ESP8266WiFi.h>
 #include <EEPROM.h>
 
-#define LED_STRIP_PIN D8 // Pin where LED strip is connected
+#if defined(ESP8266)
+  #define LED_STRIP_PIN D8 // Pin where LED strip is connected
+#elif defined(ESP32)
+  #define LED_STRIP_PIN 15 // Pin where LED strip is connected
+#endif
 
 #define MESSAGE_TYPE_BRIGHTNESS 0
 #define MESSAGE_TYPE_COLOR 1
