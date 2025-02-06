@@ -12,7 +12,7 @@
 #if defined(ESP8266)
   #define LED_STRIP_PIN 12 // Pin where LED strip is connected
 #elif defined(ESP32)
-  #define LED_STRIP_PIN 12 // Pin where LED strip is connected
+  #define LED_STRIP_PIN 27 // Pin where LED strip is connected
 #endif
 
 #define MESSAGE_TYPE_BRIGHTNESS 0
@@ -102,7 +102,9 @@ void setup()
   FastLED.addLeds<NEOPIXEL, LED_STRIP_PIN>(leds, numLeds);
 
   WiFi.mode(WIFI_STA);
+#if defined(ESP32)
   WiFi.STA.begin();
+#endif
 
   if (esp_now_init() != 0)
   {
