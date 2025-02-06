@@ -3,16 +3,16 @@
   #include <ESP8266WiFi.h>
   #include <espnow.h>
 #elif defined(ESP32)
-  #include <esp_now.h>
   #include <WiFi.h>
+  #include <esp_wifi.h>
+  #include <esp_now.h>
 #endif
-// #include <ESP8266WiFi.h>
 #include <EEPROM.h>
 
 #if defined(ESP8266)
-  #define LED_STRIP_PIN D8 // Pin where LED strip is connected
+  #define LED_STRIP_PIN 12 // Pin where LED strip is connected
 #elif defined(ESP32)
-  #define LED_STRIP_PIN 15 // Pin where LED strip is connected
+  #define LED_STRIP_PIN 12 // Pin where LED strip is connected
 #endif
 
 #define MESSAGE_TYPE_BRIGHTNESS 0
@@ -22,6 +22,9 @@
 int numLeds = 0;
 
 CRGB leds[60];
+int lastBrightness = 0;
+int lastPosition = 0;
+int lastWidth = 0;
 
 const int updateInterval = 20;  // Update every 20ms
 unsigned long lastUpdate = 0;
@@ -38,10 +41,21 @@ typedef struct struct_message
 
 struct_message receivedData;
 
+#if defined(ESP8266)
 void OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 {
   memcpy(&receivedData, incomingData, sizeof(receivedData));
+  handleIncoming();
+}
+#elif defined(ESP32)
+void OnDataRecv(const esp_now_recv_info *info, const uint8_t *incomingData, int len)
+{
+  memcpy(&receivedData, incomingData, sizeof(receivedData));
+  handleIncoming();
+}
+#endif
 
+void handleIncoming(){
   switch (receivedData.messageType)
   {
     case MESSAGE_TYPE_BRIGHTNESS:
@@ -60,6 +74,8 @@ void setColor(int brightness, int position, int width) {
   r = brightness;
   g = position;
   b = width;
+
+  setBrightness(lastPosition, lastBrightness, lastWidth);
 }
 
 void saveNumPins(int numPins) {
@@ -76,22 +92,25 @@ void saveNumPins(int numPins) {
 void setup()
 {
   Serial.begin(9600);
-  delay(5000);
+  delay(2000);
   EEPROM.begin(12);
   numLeds = EEPROM.read(0);
   if(isnan(numLeds) || numLeds == 0 || numLeds > 60) {
-    numLeds = 10;
+    numLeds = 20;
   }
 
   FastLED.addLeds<NEOPIXEL, LED_STRIP_PIN>(leds, numLeds);
 
   WiFi.mode(WIFI_STA);
+  WiFi.STA.begin();
+
   if (esp_now_init() != 0)
   {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
 
+  
   esp_now_register_recv_cb(OnDataRecv);
 
   // Print the MAC address
@@ -118,16 +137,21 @@ void setBrightness(int position, int brightness, int width) {
     int ledBrightness = min(255, max(0, brightness - (int)(distance / width * brightness)));
     leds[index] = CRGB((r * ledBrightness) / 255, (g * ledBrightness) / 255, (b * ledBrightness) / 255);
   }
+
+  lastBrightness = brightness;
+  lastPosition = position;
+  lastWidth = width;
 }
 
 void startingSequence(){
   for (int i = 0; i < numLeds; i++) {
     leds[i] = CRGB::Purple;
     FastLED.show();
-    delay(500);
+    delay(100);
     leds[i] = CRGB::Black;
   }
 }
+
 
 void loop()
 {
