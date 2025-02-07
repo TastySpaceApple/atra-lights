@@ -24,8 +24,8 @@ function setLedNumber(stripIndex, ledNumber) {
   postRequest('/setLedNumber', { ledNumber, stripIndex })
 }
 
-function setBrightnessPositionWidth(stripIndex, brightness, position, width) {
-  postRequest('/setBrightnessPositionWidth', { brightness, position, width, stripIndex })
+function setPositionBrightnessWidth(stripIndex, position, brightness, width) {
+  postRequest('/setPositionBrightnessWidth', { position, brightness, width, stripIndex })
 }
 
 function setColor(r, g, b) {
@@ -86,7 +86,7 @@ document.getElementById('width').addEventListener('input', (event) => {
   const width = event.target.value;
   
   changeState(currentDeviceId, {width});
-  setBrightnessPositionWidth(currentDeviceId, states[currentDeviceId].brightness, states[currentDeviceId].position, width)
+  setPositionBrightnessWidth(currentDeviceId, states[currentDeviceId].brightness, states[currentDeviceId].position, width)
 
 })
 
@@ -95,7 +95,7 @@ document.getElementById('position').addEventListener('input', (event) => {
   const position = event.target.value;
   changeState(currentDeviceId, {position});
 
-  setBrightnessPositionWidth(currentDeviceId, states[currentDeviceId].brightness, position, states[currentDeviceId].width)
+  setPositionBrightnessWidth(currentDeviceId, states[currentDeviceId].brightness, position, states[currentDeviceId].width)
 
 })
 
@@ -104,7 +104,7 @@ document.getElementById('brightness').addEventListener('input', (event) => {
   const brightness = event.target.value;
   changeState(currentDeviceId, {brightness});
 
-  setBrightnessPositionWidth(currentDeviceId, brightness, states[currentDeviceId].position, states[currentDeviceId].width)
+  setPositionBrightnessWidth(currentDeviceId, brightness, states[currentDeviceId].position, states[currentDeviceId].width)
 
 })
 

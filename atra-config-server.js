@@ -18,9 +18,9 @@ class AtraConfigServer extends EventEmitter {
       res.status(200).send('Event received');
     });
 
-    this.app.post('/setBrightnessPositionWidth', (req, res) => {
-      const { brightness, position, width, stripIndex } = req.body;
-      this.emit('/setBrightnessPositionWidth', {
+    this.app.post('/setPositionBrightnessWidth', (req, res) => {
+      const { position, brightness, width, stripIndex } = req.body;
+      this.emit('/setPositionBrightnessWidth', {
         brightness: parseInt(brightness),
         position: parseInt(position),
         width: parseInt(width),

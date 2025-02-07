@@ -5,7 +5,7 @@ const AtraConfigServer = require('./atra-config-server.js');
 
 const osc = new OSC({
   plugin: new OSC.DatagramPlugin({
-    open: { host: '192.168.1.32', port: 6000 },
+    open: { port: 6000 },
   })
 })
 
@@ -56,12 +56,17 @@ const sendStateUpdate = async () => {
   if (chunkToUpdate !== undefined) {
     const { chunk, position, brightness, width } = state.find((s) => s.chunk === chunkToUpdate);
     const atraMessage = new AtraBrightnessMessage(chunk, position, brightness, width);
-    console.log('Sending message', atraMessage);
     await ledController.send(atraMessage);
   }
 }
 
 setInterval(sendStateUpdate, 18);
+
+const sendAtraMessage = async (msg) => {
+  clearInterval(sendStateUpdate);
+  ledController.send(msg);
+  setTimeout(sendStateUpdate, 20);
+}
 
 // (function () {
 
@@ -94,12 +99,14 @@ configServer.start(3000);
 
 configServer.on('/setLedNumber', (data) => {
   const { stripIndex, ledNumber } = data;
-  const msg = new AtraSetLedNumberMessage(stripIndex, ledNumber);
-  ledController.send(msg);
+  console.log(stripIndex, ledNumber + 1);
+  sendAtraMessage(
+    new AtraSetLedNumberMessage(stripIndex, ledNumber)
+  );
 })
 
-configServer.on('/setBrightnessPositionWidth', (data) => {
-  const { stripIndex, brightness, position, width } = data;
+configServer.on('/setPositionBrightnessWidth', (data) => {
+  const { stripIndex, position, brightness, width } = data;
   updateState(stripIndex, position, brightness, width);
 })
 

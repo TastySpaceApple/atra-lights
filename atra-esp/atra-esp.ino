@@ -80,7 +80,7 @@ void setColor(int brightness, int position, int width) {
 
 void saveNumPins(int numPins) {
   // Save the number of pins
-  EEPROM.write(0, numPins);
+  EEPROM.put(0, numPins);
   EEPROM.commit();
 
   startingSequence();  
@@ -93,7 +93,7 @@ void setup()
 {
   Serial.begin(9600);
   delay(2000);
-  EEPROM.begin(12);
+  EEPROM.begin(512);
   numLeds = EEPROM.read(0);
   if(isnan(numLeds) || numLeds == 0 || numLeds > 60) {
     numLeds = 20;

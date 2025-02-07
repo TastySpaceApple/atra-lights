@@ -12,6 +12,7 @@
 // O	4C:EB:D6:DE:9F:2B	12
 // N	4C:EB:D6:DE:9F:7C	13
 // M	4C:EB:D6:DE:9E:E3	14
+// F	cc:db:a7:96:4c:10	15
 
 export const config = {
   devices: [
@@ -84,6 +85,11 @@ export const config = {
       'name': 'M',
       'mac': '4C:EB:D6:DE:9E:E3',
       'id': 14
+    },
+    {
+      'name': 'F',
+      'mac': 'cc:db:a7:96:4c:10',
+      'id': 15
     }
   ]
 }

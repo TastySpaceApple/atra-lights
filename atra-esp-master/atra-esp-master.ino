@@ -1,7 +1,7 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define NUM_STRIPS 14
+#define NUM_STRIPS 15
 
 // MAC addresses of the receiver
 // Z	8C:AA:B5:0F:55:CA	1
@@ -18,6 +18,7 @@
 // O	4C:EB:D6:DE:9F:2B	12
 // N	4C:EB:D6:DE:9F:7C	13
 // M	4C:EB:D6:DE:9E:E3	14
+// F	cc:db:a7:96:4c:10	15
 uint8_t broadcastAddresses[][6] = {
   {0x8C, 0xAA, 0xB5, 0x0F, 0x55, 0xCA},
   {0xC4, 0xD8, 0xD5, 0x37, 0x05, 0x68},
@@ -92,11 +93,10 @@ void setup()
 
 void sendData(uint8_t stripIndex, uint8_t messageType, uint8_t brightness, uint8_t position, uint8_t width)
 {
-  if(stripIndex >= NUM_STRIPS) {
+  if(stripIndex > NUM_STRIPS) {
     Serial.println("Invalid strip index");
     return;
   }
-
 
   // Set values to myData
   myData.messageType = messageType;
@@ -104,12 +104,12 @@ void sendData(uint8_t stripIndex, uint8_t messageType, uint8_t brightness, uint8
   myData.position = position;
   myData.width = width;
 
-
   if(stripIndex == 0) {
     Serial.println("Sending data to all strips");
     esp_now_send(NULL, (uint8_t *)&myData, sizeof(myData));
   } else {
-    Serial.println("Sending data to strip " + stripIndex);
+    Serial.print("Sending data to strip ");
+    Serial.println(stripIndex);
     esp_now_send(broadcastAddresses[stripIndex - 1], (uint8_t *)&myData, sizeof(myData));
   }
 }
@@ -120,7 +120,7 @@ void loop()
 {
   if (Serial.available() > 5)
   {
-    uint8_t stripIndex = Serial.read(); // Discard the first byte
+    uint8_t stripIndex = Serial.read();
     uint8_t messageType = Serial.read();
     uint8_t brightness = Serial.read();
     uint8_t position = Serial.read();

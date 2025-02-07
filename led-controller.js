@@ -44,7 +44,7 @@ class LedController {
     if(!this.isConnected) return;
     if(this.isSending) return;
 
-    console.log('Sending message');
+    console.log('Sending message', message.toByteArray());
     this.isSending = true;
 
     const byteArray = message.toByteArray();
