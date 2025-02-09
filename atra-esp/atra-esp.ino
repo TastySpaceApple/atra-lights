@@ -80,10 +80,8 @@ void setColor(int brightness, int position, int width) {
 
 void saveNumPins(int numPins) {
   // Save the number of pins
-  EEPROM.put(0, numPins);
+  EEPROM.write(0, numPins);
   EEPROM.commit();
-
-  startingSequence();  
 
   // then restart
   ESP.restart();
@@ -96,7 +94,7 @@ void setup()
   EEPROM.begin(512);
   numLeds = EEPROM.read(0);
   if(isnan(numLeds) || numLeds == 0 || numLeds > 60) {
-    numLeds = 20;
+    numLeds = 5;
   }
 
   FastLED.addLeds<NEOPIXEL, LED_STRIP_PIN>(leds, numLeds);
@@ -149,7 +147,7 @@ void startingSequence(){
   for (int i = 0; i < numLeds; i++) {
     leds[i] = CRGB::Purple;
     FastLED.show();
-    delay(100);
+    delay(300);
     leds[i] = CRGB::Black;
   }
 }

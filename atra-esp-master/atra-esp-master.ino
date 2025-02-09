@@ -118,7 +118,7 @@ int pos = 0;
 
 void loop()
 {
-  if (Serial.available() > 5)
+  if (Serial.available() >= 5)
   {
     uint8_t stripIndex = Serial.read();
     uint8_t messageType = Serial.read();
@@ -130,7 +130,7 @@ void loop()
     // dump the rest
     while (Serial.available() > 0)
     {
-      Serial.read();
+     Serial.read();
     }
   }
 }
