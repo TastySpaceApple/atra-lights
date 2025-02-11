@@ -74,7 +74,7 @@ osc.on('/sound/stop', (msg) => {
 osc.on('/sound/volume', (msg) => {
   const [chunk, volume] = msg.args;
   const atraSoundMessage = new AtraSoundMessage(chunk);
-  atraSoundMessage.volume(volume);
+  atraSoundMessage.setVolume(volume);
   sendOneTimeMessage(atraSoundMessage);
 });
 
@@ -148,10 +148,10 @@ configServer.on('/setColor', (data) => {
 
 
 // demo set volume
-setTimeout(() => {
-  const msg = new AtraSoundMessage(0);
-  msg.start(0);
-  sendAtraMessage(
-    msg
-  );
-}, 2000);
+// setTimeout(() => {
+//   const msg = new AtraSoundMessage(0);
+//   msg.setVolume(12);
+//   sendAtraMessage(
+//     msg
+//   );
+// }, 2000);
