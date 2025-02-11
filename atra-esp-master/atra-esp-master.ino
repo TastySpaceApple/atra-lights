@@ -1,8 +1,6 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define NUM_STRIPS 15
-
 // MAC addresses of the receiver
 // Z	8C:AA:B5:0F:55:CA	1
 // Y	C4:D8:D5:37:05:68	2
@@ -19,6 +17,10 @@
 // N	4C:EB:D6:DE:9F:7C	13
 // M	4C:EB:D6:DE:9E:E3	14
 // F	cc:db:a7:96:4c:10	15
+// B	cc:db:a7:91:ec:00   16
+// C	cc:db:a7:9d:00:54  17
+// D	cc:db:a7:9a:ce:10 18
+// E	cc:db:a7:91:d9:40 19
 uint8_t broadcastAddresses[][6] = {
   {0x8C, 0xAA, 0xB5, 0x0F, 0x55, 0xCA},
   {0xC4, 0xD8, 0xD5, 0x37, 0x05, 0x68},
@@ -34,6 +36,11 @@ uint8_t broadcastAddresses[][6] = {
   {0x4C, 0xEB, 0xD6, 0xDE, 0x9F, 0x2B},
   {0x4C, 0xEB, 0xD6, 0xDE, 0x9F, 0x7C},
   {0x4C, 0xEB, 0xD6, 0xDE, 0x9E, 0xE3},
+  {0xcc, 0xdb, 0xa7, 0x96, 0x4c, 0x10},
+  {0xcc, 0xdb, 0xa7, 0x91, 0xec, 0x00},
+  {0xcc, 0xdb, 0xa7, 0x9d, 0x00, 0x54},
+  {0xcc, 0xdb, 0xa7, 0x9a, 0xce, 0x10},
+  {0xcc, 0xdb, 0xa7, 0x91, 0xd9, 0x40}
 };
 
 #define MESSAGE_TYPE_BRIGHTNESS 0
@@ -75,8 +82,9 @@ void setup()
 
   esp_now_register_send_cb(OnDataSent);
 
+  int numStrips = sizeof(broadcastAddresses) / sizeof(broadcastAddresses[0]);
   // add peers
-  for (int i = 0; i < NUM_STRIPS; i++)
+  for (int i = 0; i < numStrips; i++)
   {
     esp_now_peer_info_t peerInfo;
     memcpy(peerInfo.peer_addr, broadcastAddresses[i], 6);
@@ -93,7 +101,8 @@ void setup()
 
 void sendData(uint8_t stripIndex, uint8_t messageType, uint8_t brightness, uint8_t position, uint8_t width)
 {
-  if(stripIndex > NUM_STRIPS) {
+  int numStrips = sizeof(broadcastAddresses) / sizeof(broadcastAddresses[0]);
+  if(stripIndex > numStrips) {
     Serial.println("Invalid strip index");
     return;
   }

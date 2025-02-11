@@ -1,6 +1,6 @@
 const OSC = require('osc-js')
 const LedController = require('./led-controller.js');
-const { AtraBrightnessMessage, AtraColorMessage, AtraSetLedNumberMessage } = require('./atra-messages.js');
+const { AtraBrightnessMessage, AtraColorMessage, AtraSetLedNumberMessage, AtraSoundMessage } = require('./atra-messages.js');
 const AtraConfigServer = require('./atra-config-server.js');
 
 const osc = new OSC({
@@ -35,6 +35,15 @@ const updateState = (chunk, position, brightness, width) => {
   }
 }
 
+const sendOneTimeMessage = (message) => {
+  // pause the state update
+  clearTimeout(sendStateUpdate);
+  // send the message
+  ledController.send(message);
+  // resume the state update
+  setTimeout(sendStateUpdate, 18);
+}
+
 osc.on('/send', (msg) => {
   const [chunk, position, brightness, width] = msg.args;
   updateState(chunk, position, brightness, width);
@@ -47,6 +56,27 @@ osc.on('/rgb', (msg) => {
   ledController.send(atraColorMessage);
   setTimeout(sendStateUpdate, 20);
 })
+
+osc.on('/sound/start', (msg) => {
+  const [chunk, track] = msg.args;
+  const atraSoundMessage = new AtraSoundMessage(chunk);
+  atraSoundMessage.start(track || 0);
+  sendOneTimeMessage(atraSoundMessage);
+})
+
+osc.on('/sound/stop', (msg) => {
+  const [chunk] = msg.args;
+  const atraSoundMessage = new AtraSoundMessage(chunk);
+  atraSoundMessage.stop();
+  sendOneTimeMessage(atraSoundMessage);
+});
+
+osc.on('/sound/volume', (msg) => {
+  const [chunk, volume] = msg.args;
+  const atraSoundMessage = new AtraSoundMessage(chunk);
+  atraSoundMessage.volume(volume);
+  sendOneTimeMessage(atraSoundMessage);
+});
 
 const ledController = new LedController();
 ledController.open();
@@ -115,3 +145,13 @@ configServer.on('/setColor', (data) => {
   const atraColorMessage = new AtraColorMessage(0, r, g, b);
   ledController.send(atraColorMessage);
 })
+
+
+// demo set volume
+setTimeout(() => {
+  const msg = new AtraSoundMessage(0);
+  msg.start(0);
+  sendAtraMessage(
+    msg
+  );
+}, 2000);
