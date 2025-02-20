@@ -77,11 +77,11 @@ const changeState = (stripIndex, update) => {
 }
 
 
-document.getElementById('btn-set-led-number').addEventListener('click', () => {
-  const ledNumber = document.getElementById('led-number').value;
-  setLedNumber(currentDeviceId, ledNumber);
-  changeState(currentDeviceId, {ledNumber});
-})
+// document.getElementById('btn-set-led-number').addEventListener('click', () => {
+//   const ledNumber = document.getElementById('led-number').value;
+//   setLedNumber(currentDeviceId, ledNumber);
+//   changeState(currentDeviceId, {ledNumber});
+// })
 
 //width
 document.getElementById('width').addEventListener('input', (event) => {
