@@ -21,18 +21,20 @@ const updateState = (chunk, position, brightness, width) => {
   const index = state.findIndex((s) => s.chunk === chunk);
   if (index === -1) {
     state.push({ chunk, position, brightness, width });
+    chunksToUpdate.push(chunk);
   } else {
     // find the update and update it
     if (state[index].position === position && state[index].brightness === brightness && state[index].width === width) {
       return;
     }
-
+  
     if (!chunksToUpdate.includes(chunk)) {
       chunksToUpdate.push(chunk);
     }
 
     state[index] = { chunk, position, brightness, width };
   }
+
 }
 
 const sendOneTimeMessage = (message) => {
@@ -129,7 +131,10 @@ configServer.start(3000);
 
 configServer.on('/setLedNumber', (data) => {
   const { stripIndex, ledNumber } = data;
-  console.log(stripIndex, ledNumber + 1);
+  if(stripIndex === 0){
+    console.log('not setting all led number!');
+    return;
+  }
   sendAtraMessage(
     new AtraSetLedNumberMessage(stripIndex, ledNumber)
   );
@@ -146,12 +151,23 @@ configServer.on('/setColor', (data) => {
   ledController.send(atraColorMessage);
 })
 
+configServer.on('/play-horns', () => {
+  const atraSoundMessage = new AtraSoundMessage(0);
+  atraSoundMessage.start(0);
+  sendOneTimeMessage(atraSoundMessage);
+});
+
+configServer.on('/stop-horns', () => {
+  const atraSoundMessage = new AtraSoundMessage(0);
+  atraSoundMessage.stop();
+  sendOneTimeMessage(atraSoundMessage);
+})
 
 // demo set volume
-// setTimeout(() => {
-//   const msg = new AtraSoundMessage(0);
-//   msg.setVolume(12);
-//   sendAtraMessage(
-//     msg
-//   );
-// }, 2000);
+setTimeout(() => {
+  const msg = new AtraSoundMessage(0);
+  msg.setVolume(12);
+  sendAtraMessage(
+    msg
+  );
+}, 2000);

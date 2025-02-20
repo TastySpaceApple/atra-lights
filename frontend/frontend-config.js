@@ -17,6 +17,11 @@
 export const config = {
   devices: [
     {
+      'name': 'All',
+      'mac': '',
+      'id': 0
+    },
+    {
       'name': 'Z',
       'mac': '8C:AA:B5:0F:55:CA',
       'id': 1

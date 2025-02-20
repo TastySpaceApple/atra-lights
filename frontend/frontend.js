@@ -6,9 +6,11 @@ const defaultState = {
   width: 50
 }
 
-let states = []
+let states = {
+  0: defaultState
+}
 
-let currentDeviceId = 1;
+let currentDeviceId = 0;
 
 function postRequest(url, data) {
   return fetch(url, {
@@ -117,6 +119,14 @@ document.getElementById('color').addEventListener('input', (event) => {
   setColor(r, g, b);
 })
 
-
 // select the first
 devicesList.querySelector('input').checked = true;
+
+// horns
+document.getElementById('btn-horns-play-all').addEventListener('click', () => {
+  postRequest('/play-horns', {})
+})
+
+document.getElementById('btn-horns-stop-all').addEventListener('click', () => {
+  postRequest('/stop-horns', {})
+})
