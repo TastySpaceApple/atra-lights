@@ -1,0 +1,50 @@
+#include "Wav.h"
+
+void CreateWavHeader(byte* header, int waveDataSize, int sampleRate, int numChannels){
+  header[0] = 'R';
+  header[1] = 'I';
+  header[2] = 'F';
+  header[3] = 'F';
+  unsigned int fileSizeMinus8 = waveDataSize + 44 - 8;
+  header[4] = (byte)(fileSizeMinus8 & 0xFF);
+  header[5] = (byte)((fileSizeMinus8 >> 8) & 0xFF);
+  header[6] = (byte)((fileSizeMinus8 >> 16) & 0xFF);
+  header[7] = (byte)((fileSizeMinus8 >> 24) & 0xFF);
+  header[8] = 'W';
+  header[9] = 'A';
+  header[10] = 'V';
+  header[11] = 'E';
+  header[12] = 'f';
+  header[13] = 'm';
+  header[14] = 't';
+  header[15] = ' ';
+  header[16] = 0x10;  // linear PCM
+  header[17] = 0x00;
+  header[18] = 0x00;
+  header[19] = 0x00;
+  header[20] = 0x01;  // linear PCM
+  header[21] = 0x00;
+  header[22] = (byte)(numChannels & 0xFF);  // number of channels
+  header[23] = (byte)((numChannels >> 8) & 0xFF);
+  header[24] = (byte)(sampleRate & 0xFF);  // sampling rate
+  header[25] = (byte)((sampleRate >> 8) & 0xFF);
+  header[26] = (byte)((sampleRate >> 16) & 0xFF);
+  header[27] = (byte)((sampleRate >> 24) & 0xFF);
+  unsigned int byteRate = sampleRate * numChannels;  // Byte/sec
+  header[28] = (byte)(byteRate & 0xFF);
+  header[29] = (byte)((byteRate >> 8) & 0xFF);
+  header[30] = (byte)((byteRate >> 16) & 0xFF);
+  header[31] = (byte)((byteRate >> 24) & 0xFF);
+  header[32] = (byte)(numChannels * 2);  // block align
+  header[33] = 0x00;
+  header[34] = 0x10;  // 16bit
+  header[35] = 0x00;
+  header[36] = 'd';
+  header[37] = 'a';
+  header[38] = 't';
+  header[39] = 'a';
+  header[40] = (byte)(waveDataSize & 0xFF);
+  header[41] = (byte)((waveDataSize >> 8) & 0xFF);
+  header[42] = (byte)((waveDataSize >> 16) & 0xFF);
+  header[43] = (byte)((waveDataSize >> 24) & 0xFF);
+}

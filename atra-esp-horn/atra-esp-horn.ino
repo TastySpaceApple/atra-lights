@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <esp_wifi.h>
 #include <esp_now.h>
 #include <YX5300_ESP32.h>
 #include <EEPROM.h>
@@ -47,6 +48,19 @@ void handleIncoming(){
   }
 }
 
+void readMacAddress(){
+  uint8_t baseMac[6];
+  esp_err_t ret = esp_wifi_get_mac(WIFI_IF_STA, baseMac);
+  if (ret == ESP_OK) {
+    Serial.printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
+                  baseMac[0], baseMac[1], baseMac[2],
+                  baseMac[3], baseMac[4], baseMac[5]);
+  } else {
+    Serial.println("Failed to read MAC address");
+  }
+}
+
+
 void saveVolume(int volume) {
   // Save the volume
   EEPROM.write(0, volume);
@@ -60,13 +74,12 @@ void setup()
   player = YX5300_ESP32(Serial2, RX, TX);
 
   Serial.println("ESP Board MAC Address: ");
-  WiFi.mode(WIFI_STA);
 
-  if (esp_now_init() != ESP_OK)
-  {
-    Serial.println("Error initializing ESP-NOW");
-    return;
-  }
+  WiFi.mode(WIFI_STA);
+  WiFi.STA.begin();
+
+  Serial.print("[DEFAULT] ESP32 Board MAC Address: ");
+  readMacAddress();
 
   esp_now_register_recv_cb(esp_now_recv_cb_t(recv));
 
