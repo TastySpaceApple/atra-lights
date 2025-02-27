@@ -163,10 +163,18 @@ configServer.on('/stop-horns', () => {
   sendOneTimeMessage(atraSoundMessage);
 })
 
+//
+configServer.on('/set-horns-volume', (data) => {
+  const { volume } = data;
+  const atraSoundMessage = new AtraSoundMessage(0);
+  atraSoundMessage.setVolume(volume);
+  sendOneTimeMessage(atraSoundMessage);
+});
+
 // demo set volume
 setTimeout(() => {
-  const msg = new AtraSoundMessage(0);
-  msg.setVolume(12);
+  const msg = new AtraSoundMessage(18);
+  msg.stop(0);
   sendAtraMessage(
     msg
   );

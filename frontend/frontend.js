@@ -130,3 +130,7 @@ document.getElementById('btn-horns-play-all').addEventListener('click', () => {
 document.getElementById('btn-horns-stop-all').addEventListener('click', () => {
   postRequest('/stop-horns', {})
 })
+
+document.querySelector('#range-horn-volume').addEventListener('input', (event) => {
+  postRequest('/set-horns-volume', { volume: event.target.value })
+});

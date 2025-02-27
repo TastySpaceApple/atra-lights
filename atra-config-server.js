@@ -50,6 +50,15 @@ class AtraConfigServer extends EventEmitter {
       this.emit('/stop-horns');
       res.status(200).send('Command received');
     });
+
+    // set-horns-volume
+    this.app.post('/set-horns-volume', (req, res) => {
+      const { volume } = req.body;
+      this.emit('/set-horns-volume', {
+        volume: parseInt(volume)
+      });
+      res.status(200).send('Event received');
+    });
   }
 
   start(port) {

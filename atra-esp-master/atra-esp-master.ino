@@ -19,8 +19,8 @@
 // F	cc:db:a7:96:4c:10	15
 // B	cc:db:a7:91:ec:00   16
 // C	cc:db:a7:9d:00:54  17
-// D	cc:db:a7:9a:ce:10 18
-// E	cc:db:a7:91:d9:40 19
+// D	cc:db:a7:9a:ce:10 18     LUNA
+// E	cc:db:a7:91:d9:40 19     ALI
 // G	cc:db:a7:98:bb:54 20
 // H	cc:db:a7:98:d7:f4 21    LIRON
 // K	D8:BF:C0:FA:91:0B 22

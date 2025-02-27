@@ -45,10 +45,10 @@ float timeoutLedFade = 3000;
 void setup() {
   Serial.begin(115200);
   if (!SD.begin(15)) Serial.println("SD begin failed");
-  while (!SD.begin(15)) {
-    Serial.print(".");
-    delay(500);
-  }
+  // while (!SD.begin(15)) {
+  //   Serial.print(".");
+  //   delay(500);
+  // }
   I2S_Init(I2S_MODE, I2S_BITS_PER_SAMPLE_32BIT);
 
   // pin is dimming with pwm
