@@ -1,5 +1,3 @@
-#include <esp_now.h>
-#include <WiFi.h>
 
 // MAC addresses of the receiver
 // lights ----------------
@@ -34,7 +32,7 @@ uint8_t broadcastAddresses[][6] = {
   {0x4C, 0xEB, 0xD6, 0xDE, 0x9F, 0x7C},
   {0x4C, 0xEB, 0xD6, 0xDE, 0x9E, 0xE3},
   {0xcc, 0xdb, 0xa7, 0x96, 0x4c, 0x10}
-}
+};
 
 const int buttonBrightnessPin = 2; 
 const int buttonWidthPin = 3; 
@@ -81,6 +79,7 @@ int moveDragHandValue(int currentValue){
     startDistance = distance;
     startValue = currentValue;
     isDragging = true;
+    return currentValue;
   } else {
     int diff = startDistance - distance;
     int diffNormalized = diff / rangeDistanceCm * 100;
@@ -96,6 +95,15 @@ int moveDragHandValue(int currentValue){
 
 void endDrag(){
   isDragging = false;
+}
+
+void sendData(){
+  Serial.print("Brightness: ");
+  Serial.print(brightness);
+  Serial.print(", Width: ");
+  Serial.print(width);
+  Serial.print(", Position: ");
+  Serial.println(position);
 }
 
 void loop() {
