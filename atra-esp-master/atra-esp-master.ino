@@ -2,6 +2,7 @@
 #include <WiFi.h>
 
 // MAC addresses of the receiver
+// lights ----------------
 // Z	8C:AA:B5:0F:55:CA	1
 // Y	C4:D8:D5:37:05:68	2
 // X	F4:CF:A2:DF:A1:2E	3
@@ -17,10 +18,11 @@
 // N	4C:EB:D6:DE:9F:7C	13
 // M	4C:EB:D6:DE:9E:E3	14
 // F	cc:db:a7:96:4c:10	15
-// B	cc:db:a7:91:ec:00   16
-// C	cc:db:a7:9d:00:54  17
-// D	cc:db:a7:9a:ce:10 18     LUNA
-// E	cc:db:a7:91:d9:40 19     ALI
+// other -----------------
+// B	cc:db:a7:91:ec:00 16
+// C	cc:db:a7:9d:00:54 17
+// D	cc:db:a7:9a:ce:10 18    LUNA
+// E	cc:db:a7:91:d9:40 19    ALI (BURNT)
 // G	cc:db:a7:98:bb:54 20
 // H	cc:db:a7:98:d7:f4 21    LIRON
 // K	D8:BF:C0:FA:91:0B 22
