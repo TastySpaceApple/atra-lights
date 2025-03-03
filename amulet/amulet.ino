@@ -1,3 +1,5 @@
+#include <ESP8266WiFi.h>
+#include <espnow.h>
 
 // MAC addresses of the receiver
 // lights ----------------
@@ -34,28 +36,45 @@ uint8_t broadcastAddresses[][6] = {
   {0xcc, 0xdb, 0xa7, 0x96, 0x4c, 0x10}
 };
 
-const int buttonBrightnessPin = 2; 
-const int buttonWidthPin = 3; 
-const int buttonPositionPin = 4; 
+#define MESSAGE_TYPE_BRIGHTNESS 0
+#define MESSAGE_TYPE_COLOR 1
+#define MESSAGE_TYPE_LED_NUMBER 2
 
-const int trigPin = 5; // Pin for the ultrasonic sensor trigger
-const int echoPin = 6; // Pin for the ultrasonic sensor echo
+typedef struct struct_message
+{
+  uint8_t messageType;
+  uint8_t brightness;
+  uint8_t position;
+  uint8_t width;
+} struct_message;
 
-const int rangeDistanceCm = 20; // Maximum distance we want to ping for (in centimeters)
+// Create a struct_message called myData
+struct_message esp_now_message;
 
-int position = 0;
-int brightness = 0;
-int width = 0;
+const int buttonBrightnessPin = D1; 
+const int buttonWidthPin = D2; 
+const int buttonPositionPin = D3; 
+
+const int trigPin = D6; // Pin for the ultrasonic sensor trigger
+const int echoPin = D7; // Pin for the ultrasonic sensor echo
+
+const float rangeDistanceMaxCm = 18; // Maximum distance we want to ping for (in centimeters)
+const float rangeDistanceMinCm = 4; // Minimum distance we want to ping for (in centimeters)
+
+int position = 50;
+int brightness = 50;
+int width = 50;
 
 int startDistance = 0;
 int startValue = 0;
 bool isDragging = false;
 
+
 void setup() {
   // Initialize the push button pins as inputs
-  pinMode(buttonBrightnessPin, INPUT);
-  pinMode(buttonWidthPin, INPUT);
-  pinMode(buttonPositionPin, INPUT);
+  pinMode(buttonBrightnessPin, INPUT_PULLUP);
+  pinMode(buttonWidthPin, INPUT_PULLUP);
+  pinMode(buttonPositionPin, INPUT_PULLUP);
 
   // Initialize the ultrasonic sensor pins
   pinMode(trigPin, OUTPUT);
@@ -63,10 +82,22 @@ void setup() {
 
   // Optionally, initialize serial communication for debugging
   Serial.begin(9600);
+
+  // espnow init and register peers
+  WiFi.mode(WIFI_STA);
+  if (esp_now_init() != 0) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  for (int i = 0; i < 15; i++) {
+    esp_now_add_peer(broadcastAddresses[i], ESP_NOW_ROLE_CONTROLLER, 1, NULL, 0);
+  }
 }
 
 int moveDragHandValue(int currentValue){
-  long duration, distance;
+  long duration;
+  float distance;
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -81,9 +112,9 @@ int moveDragHandValue(int currentValue){
     isDragging = true;
     return currentValue;
   } else {
-    int diff = startDistance - distance;
-    int diffNormalized = diff / rangeDistanceCm * 100;
-    currentValue = startValue + diffNormalized;
+    float diff = startDistance - distance;
+    float diffNormalized = diff / (rangeDistanceMaxCm - rangeDistanceMinCm) * 100;
+    currentValue = startValue - diffNormalized;
     if(currentValue < 0){
       currentValue = 0;
     } else if(currentValue > 100){
@@ -98,39 +129,31 @@ void endDrag(){
 }
 
 void sendData(){
-  Serial.print("Brightness: ");
-  Serial.print(brightness);
-  Serial.print(", Width: ");
-  Serial.print(width);
-  Serial.print(", Position: ");
-  Serial.println(position);
+  esp_now_message.messageType = MESSAGE_TYPE_BRIGHTNESS;
+  esp_now_message.brightness = brightness;
+  esp_now_message.position = position;
+  esp_now_message.width = width;
+
+  esp_now_send(NULL, (uint8_t *)&esp_now_message, sizeof(esp_now_message));
 }
 
 void loop() {
-  if (digitalRead(buttonBrightnessPin) == HIGH) {
-    Serial.print("Brightness button pressed, value: ");
+  if (digitalRead(buttonBrightnessPin) == LOW) {
     brightness = moveDragHandValue(brightness);
-    Serial.println(brightness);
-    // Send brightness data to the other ESP32
-    // sendData(1, MESSAGE_TYPE_BRIGHTNESS, 255, 0, 0);
+    sendData();
   }
-  else if (digitalRead(buttonWidthPin) == HIGH) {
-    Serial.print("Width button pressed, value: ");
+  else if (digitalRead(buttonWidthPin) == LOW) {
     width = moveDragHandValue(width);
-    Serial.println(width);
-    // Send width data to the other ESP32
-    // sendData(1, MESSAGE_TYPE_LED_NUMBER, 255, 0, 0);
+    sendData();
   }
-  else if (digitalRead(buttonPositionPin) == HIGH) {
-    Serial.print("Position button pressed, value: ");
+  else if (digitalRead(buttonPositionPin) == LOW) {
     position = moveDragHandValue(position);
-    Serial.println(position);
-    // Send position data to the other ESP32
-    // sendData(1, MESSAGE_TYPE_COLOR, 255, 0, 0);
-  } else {
+    sendData();
+  } 
+  else {
     endDrag();
   }
 
   // Add a small delay to avoid flooding the serial monitor
-  delay(100);
+  delay(40);
 }
