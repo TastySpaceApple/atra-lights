@@ -25,7 +25,7 @@ struct_message receivedData;
 
 YX5300_ESP32 player;
 
-void recv(const uint8_t *mac, const uint8_t *incoming, int len)
+void recv(const esp_now_recv_info *info, const uint8_t *incoming, int len)
 {
   memcpy(&receivedData, incoming, sizeof(receivedData));
   handleIncoming();
@@ -71,17 +71,20 @@ void setup()
 {
   Serial.begin(115200);
 
+  delay(2000);
+
   player = YX5300_ESP32(Serial2, RX, TX);
 
-  Serial.println("ESP Board MAC Address: ");
+  WiFi.mode(WIFI_AP_STA);
 
-  WiFi.mode(WIFI_STA);
-  WiFi.STA.begin();
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
 
-  Serial.print("[DEFAULT] ESP32 Board MAC Address: ");
-  readMacAddress();
-
-  esp_now_register_recv_cb(esp_now_recv_cb_t(recv));
+  Serial.println("esp now started");
+  
+  esp_now_register_recv_cb(recv);
 
   int volume = EEPROM.read(0);
   if(isnan(volume) || volume == 0 || volume > 30) {
@@ -95,4 +98,6 @@ void setup()
 
 void loop()
 {
+  delay(1000);
+  saveVolume(10)
 }

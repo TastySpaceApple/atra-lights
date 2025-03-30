@@ -40,6 +40,10 @@ class LedController {
     });
   }
 
+  get isPortOpen() {
+    return this.port.isOpen;
+  }
+
   send(message) {
     if(!this.isConnected) return;
     if(this.isSending) return;

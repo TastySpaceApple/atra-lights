@@ -179,3 +179,11 @@ setTimeout(() => {
     msg
   );
 }, 2000);
+
+// interval to check if the led controller is still connected
+setInterval(() => {
+  if (!ledController.isPortOpen) {
+    console.log('Reconnecting to the led controller');
+    ledController.open();
+  }
+}, 5000);
